@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ting Constitution Quiz | 听</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(180deg, #fafaf9 0%, #f5f5f4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #292524;
+        }
+
+        .container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #5f7a55 0%, #7a9970 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            color: white;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            line-height: 1.2;
+            margin-bottom: 16px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #78716c;
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-width: 600px;
+        }
+
+        .btn {
+            background: #5f7a55;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn:hover {
+            background: #4f6a45;
+            transform: translateY(-2px);
+        }
+
+        .progress {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e7e5e4;
+            transition: background 0.3s;
+        }
+
+        .progress-dot.active {
+            background: #5f7a55;
+        }
+
+        .question-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            margin-bottom: 32px;
+            color: #292524;
+        }
+
+        .answers {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .answer-btn {
+            background: white;
+            border: 1px solid #e7e5e4;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+            color: #292524;
+        }
+
+        .answer-btn:hover {
+            background: #f5f5f4;
+            border-color: #5f7a55;
+        }
+
+        .result-emoji {
+            font-size: 80px;
+            margin-bottom: 16px;
+        }
+
+        .result-chinese {
+            font-size: 48px;
+            color: rgba(95, 122, 85, 0.7);
+            font-family: 'Cormorant Garamond', serif;
+            margin-bottom: 8px;
+        }
+
+        .result-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            margin-bottom: 24px;
+        }
+
+        .result-desc {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #57534e;
+            margin-bottom: 32px;
+            max-width: 600px;
+        }
+
+        .recommendations {
+            background: #f5f5f4;
+            padding: 32px;
+            border-radius: 16px;
+            margin-bottom: 32px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .recommendations h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #292524;
+        }
+
+        .recommendations div {
+            margin-bottom: 12px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 40px;
+            }
+
+            .question-text {
+                font-size: 24px;
+            }
+
+            .result-name, .result-chinese {
+                font-size: 36px;
+            }
+
+            .logo {
+                width: 60px;
+                height: 60px;
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div class="container">
+        <div id="welcome" class="section active">
+            <div class="logo">听</div>
+            <h1>Discover Your Constitution</h1>
+            <p class="subtitle">In TCM, everyone has a unique constitution — a pattern that affects how you feel and what your body needs to thrive. Answer 5 questions to discover yours.</p>
+            <button class="btn" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz" class="section">
+            <div class="progress">
+                <div class="progress-dot" id="dot-0"></div>
+                <div class="progress-dot" id="dot-1"></div>
+                <div class="progress-dot" id="dot-2"></div>
+                <div class="progress-dot" id="dot-3"></div>
+                <div class="progress-dot" id="dot-4"></div>
+            </div>
+            <h2 class="question-text" id="question"></h2>
+            <div class="answers" id="answers"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result" class="section">
+            <div class="result-emoji" id="result-emoji"></div>
+            <div class="result-chinese" id="result-chinese"></div>
+            <h2 class="result-name" id="result-name"></h2>
+            <p class="result-desc" id="result-desc"></p>
+            <div class="recommendations">
+                <h3>What helps you:</h3>
+                <div id="result-recs"></div>
+            </div>
+            <button class="btn" onclick="location.reload()">Retake Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "How's your energy usually?",
+                answers: [
+                    { text: "I'm tired a lot, especially in the afternoon", type: "qi-def" },
+                    { text: "I feel wired but tired — restless energy", type: "yin-def" },
+                    { text: "I'm cold and sluggish, hard to get going", type: "yang-def" },
+                    { text: "My energy is pretty stable throughout the day", type: "balanced" }
+                ]
+            },
+            {
+                q: "How do you run temperature-wise?",
+                answers: [
+                    { text: "Always cold — cold hands, cold feet", type: "yang-def" },
+                    { text: "I run warm, often feel hot", type: "yin-def" },
+                    { text: "I feel heavy and sluggish, especially in humidity", type: "damp" },
+                    { text: "Pretty neutral, adapts to the environment", type: "balanced" }
+                ]
+            },
+            {
+                q: "How's your digestion?",
+                answers: [
+                    { text: "Bloated often, loose stools", type: "qi-def" },
+                    { text: "Acid reflux, burning sensations", type: "yin-def" },
+                    { text: "Sluggish, feel heavy after eating", type: "damp" },
+                    { text: "Generally good, regular", type: "balanced" }
+                ]
+            },
+            {
+                q: "How do you handle stress?",
+                answers: [
+                    { text: "I get tense, irritable, headaches", type: "stag" },
+                    { text: "I withdraw, feel overwhelmed and exhausted", type: "qi-def" },
+                    { text: "Anxiety, racing thoughts, can't sleep", type: "yin-def" },
+                    { text: "I manage it okay, recover fairly quickly", type: "balanced" }
+                ]
+            },
+            {
+                q: "How's your sleep?",
+                answers: [
+                    { text: "Hard to fall asleep, mind races", type: "yin-def" },
+                    { text: "I wake up in the night (especially 1-3am)", type: "stag" },
+                    { text: "I sleep a lot but still feel tired", type: "qi-def" },
+                    { text: "Generally sleep well", type: "balanced" }
+                ]
+            }
+        ];
+
+        const constitutions = {
+            "qi-def": {
+                emoji: "😴",
+                name: "Qi Deficiency",
+                chinese: "气虚",
+                desc: "Your body's vital energy is running low. You tend to feel tired, catch colds easily, and may have weak digestion. Think of it like your battery is always at 30% — you're running, but not at full capacity.",
+                recs: [
+                    "Eat warming, cooked foods — your body needs easily digestible fuel",
+                    "Gentle exercise like walking or tai chi (not depleting workouts)",
+                    "Never skip meals — your body needs consistent energy",
+                    "Get to bed by 10pm to rebuild Qi overnight",
+                    "Avoid raw/cold foods and iced drinks"
+                ]
+            },
+            "yang-def": {
+                emoji: "🧊",
+                name: "Yang Deficiency",
+                chinese: "阳虚",
+                desc: "Your warming energy is depleted. You feel cold easily, may have low back pain, and prefer warm environments. It's like your internal furnace isn't burning hot enough.",
+                recs: [
+                    "Warming spices: ginger, cinnamon, fennel in every meal",
+                    "Keep your lower back and feet warm always",
+                    "Gentle warming exercise (not sweating/depleting)",
+                    "Warm soups and stews over cold/raw foods",
+                    "Sun exposure when possible"
+                ]
+            },
+            "yin-def": {
+                emoji: "🔥",
+                name: "Yin Deficiency",
+                chinese: "阴虚",
+                desc: "Your cooling, moistening energy is low. You may feel warm, have night sweats, dry skin, and restless sleep. Think of it like your AC is broken — there's heat without enough cooling.",
+                recs: [
+                    "Cooling, moistening foods: pears, tremella, lily bulb",
+                    "Avoid overstimulation — rest is medicine",
+                    "Less intense exercise, more yin activities like yin yoga",
+                    "Stay hydrated throughout the day",
+                    "Avoid late nights (sleep before midnight)"
+                ]
+            },
+            "stag": {
+                emoji: "😤",
+                name: "Qi Stagnation",
+                chinese: "气郁",
+                desc: "Your energy isn't flowing smoothly. You may feel tense, irritable, have PMS, or tension headaches. It's like a traffic jam in your body — everything's backed up.",
+                recs: [
+                    "Movement & stretching daily — get things flowing",
+                    "Aromatic foods: citrus, mint, fennel, rose",
+                    "Express emotions — don't bottle things up",
+                    "Regular cardiovascular exercise",
+                    "Deep breathing exercises"
+                ]
+            },
+            "damp": {
+                emoji: "🌫️",
+                name: "Phlegm-Dampness",
+                chinese: "痰湿",
+                desc: "There's excess dampness in your system. You may feel heavy, foggy, have mucus, or retain water easily. Think of it like your body is a sponge that absorbed too much water.",
+                recs: [
+                    "Light, simple foods — your digestion needs a break",
+                    "Avoid dairy, fried foods, and sugar completely",
+                    "Regular movement to circulate fluids",
+                    "Barley, Job's tears, and aduki beans are your friends",
+                    "Don't nap during the day"
+                ]
+            },
+            "balanced": {
+                emoji: "✨",
+                name: "Balanced Constitution",
+                chinese: "平和",
+                desc: "Your body is in good balance! You adapt well to changes, have steady energy, and recover quickly from illness. The goal now is maintaining this beautiful equilibrium.",
+                recs: [
+                    "Eat seasonally — align with nature's rhythms",
+                    "Moderate exercise — not too intense, not too gentle",
+                    "Regular sleep schedule (consistency is key)",
+                    "Variety in diet to cover all bases",
+                    "Continue what you're doing!"
+                ]
+            }
+        };
+
+        let currentQuestion = 0;
+        let answers = {};
+
+        function startQuiz() {
+            document.getElementById('welcome').classList.remove('active');
+            document.getElementById('quiz').classList.add('active');
+            showQuestion(0);
+        }
+
+        function showQuestion(num) {
+            currentQuestion = num;
+            
+            // Update progress dots
+            for (let i = 0; i < 5; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (i <= num) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            }
+            
+            // Show question
+            document.getElementById('question').textContent = questions[num].q;
+            
+            // Show answers
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = '';
+            
+            questions[num].answers.forEach((answer, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'answer-btn';
+                btn.textContent = answer.text;
+                btn.onclick = () => selectAnswer(answer.type);
+                answersDiv.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(type) {
+            answers[currentQuestion] = type;
+            
+            if (currentQuestion < 4) {
+                showQuestion(currentQuestion + 1);
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            // Count answer types
+            const counts = {};
+            Object.values(answers).forEach(type => {
+                counts[type] = (counts[type] || 0) + 1;
+            });
+            
+            // Find highest count
+            const result = Object.keys(counts).reduce((a, b) => 
+                counts[a] > counts[b] ? a : b
+            );
+            
+            // Hide quiz, show result
+            document.getElementById('quiz').classList.remove('active');
+            document.getElementById('result').classList.add('active');
+            
+            // Display result
+            const constitution = constitutions[result];
+            document.getElementById('result-emoji').textContent = constitution.emoji;
+            document.getElementById('result-chinese').textContent = constitution.chinese;
+            document.getElementById('result-name').textContent = constitution.name;
+            document.getElementById('result-desc').textContent = constitution.desc;
+            
+            // Display recommendations
+            const recsDiv = document.getElementById('result-recs');
+            recsDiv.innerHTML = constitution.recs.map(rec => 
+                `<div>• ${rec}</div>`
+            ).join('');
+            
+            // Store in localStorage
+            localStorage.setItem('tingConstitution', result);
+        }
+    </script>
+</body>
+</html>
